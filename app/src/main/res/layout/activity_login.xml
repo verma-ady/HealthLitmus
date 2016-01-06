@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Login">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:background="#ffffff">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp" >
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="Register With Health Litmus"
+                android:id="@+id/buttonRegisterHealthLitmus"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:theme="@style/ThemeOverlay.LoginButton">
+            </Button>
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="Register With Facebook"
+                android:id="@+id/buttonRegisterFacebook"
+                android:layout_marginTop="10dp"
+                android:theme="@style/ThemeOverlay.LoginButton"
+                android:textStyle="bold">
+            </Button>
+
+        </LinearLayout>
+    </FrameLayout>
+</RelativeLayout>
