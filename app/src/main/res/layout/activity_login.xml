@@ -7,14 +7,14 @@
     tools:context=".Login">
 
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_Login"
         layout="@layout/toolbar"
         />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/toolbar_Login"
         android:background="#ffffff">
 
         <LinearLayout
@@ -38,15 +38,14 @@
                 android:theme="@style/ThemeOverlay.LoginButton">
             </Button>
 
-            <Button
+            <com.facebook.login.widget.LoginButton
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:text="Register With Facebook"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:id="@+id/buttonRegisterFacebook"
-                android:layout_marginTop="10dp"
-                android:theme="@style/ThemeOverlay.LoginButton"
-                android:textStyle="bold">
-            </Button>
+                android:layout_marginTop="10dp" >
+            </com.facebook.login.widget.LoginButton>
 
         </LinearLayout>
     </FrameLayout>

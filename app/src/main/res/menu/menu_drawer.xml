@@ -7,13 +7,37 @@
         <item
             android:id="@+id/navigation_drawer_home"
             android:checked="true"
-            android:title="Item1"
+            android:title="Home"
             android:icon="@drawable/ic_home" />
 
         <item
-            android:id="@+id/navigation_drawer_maths"
+            android:id="@+id/navigation_drawer_appointment"
             android:checked="false"
-            android:title="Item2"
+            android:title="Appointment"
+            android:icon="@drawable/ic_people" />
+
+        <item
+            android:id="@+id/navigation_drawer_pastTest"
+            android:checked="false"
+            android:title="Past Test"
+            android:icon="@drawable/ic_people" />
+
+        <item
+            android:id="@+id/navigation_drawer_Invoices"
+            android:checked="false"
+            android:title="Invoices"
+            android:icon="@drawable/ic_people" />
+
+        <item
+            android:id="@+id/navigation_drawer_loyaltyBonus"
+            android:checked="false"
+            android:title="LoyaltyBonus"
+            android:icon="@drawable/ic_people" />
+
+        <item
+            android:id="@+id/navigation_drawer_offers"
+            android:checked="false"
+            android:title="Offers"
             android:icon="@drawable/ic_people" />
 
     </group>

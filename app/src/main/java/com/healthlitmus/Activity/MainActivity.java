@@ -1,10 +1,5 @@
-package com.healthlitmus;
+package com.healthlitmus.Activity;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -15,8 +10,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.healthlitmus.Fragment.Home;
+import com.healthlitmus.Fragment.TestResult;
+import com.healthlitmus.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Home home;
-
+    private TestResult testResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.framelayout_home, home);
         fragmentTransaction.commit();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_Main);
         // enabling toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -57,10 +55,38 @@ public class MainActivity extends AppCompatActivity {
                 menuItem.setChecked(false);
                 android.support.v4.app.FragmentTransaction fragmentTransaction;
                 android.support.v4.app.Fragment currentFragment;
-                //Check to see which item was being clicked and perform appropriate action
-//                switch (menuItem.getItemId()) {
-                Log.v("MyApp", getClass().toString() + " navogation touch listener " + menuItem.getItemId() );
+                Log.v("MyApp", getClass().toString() + " navigation touch listener " );
 
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+                    case R.id.navigation_drawer_home:
+                        home = new Home();
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.framelayout_home, home).addToBackStack("");
+                        fragmentTransaction.commit();
+                        break;
+
+                    case R.id.navigation_drawer_appointment:
+                        Toast.makeText(getApplicationContext(), "Yet To be Developed", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case R.id.navigation_drawer_Invoices:
+                        Toast.makeText(getApplicationContext(), "Yet To be Developed", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case R.id.navigation_drawer_pastTest:
+                        Toast.makeText(getApplicationContext(), "Yet To be Developed", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case R.id.navigation_drawer_loyaltyBonus:
+                        Toast.makeText(getApplicationContext(), "Yet To be Developed", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case R.id.navigation_drawer_offers:
+                        Toast.makeText(getApplicationContext(), "Yet To be Developed", Toast.LENGTH_LONG).show();
+                        break;
+
+                }
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
                 return true;

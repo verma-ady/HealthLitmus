@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer"
     android:background="#ffffff"
-    tools:context="com.healthlitmus.MainActivity">
+    tools:context="com.healthlitmus.Activity.MainActivity">
     <!--android:fitsSystemWindows="true">-->
 
     <LinearLayout
@@ -18,7 +18,7 @@
         android:id="@+id/linearLayout"
         >
         <include
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_Main"
             layout="@layout/toolbar"
             />
         <FrameLayout

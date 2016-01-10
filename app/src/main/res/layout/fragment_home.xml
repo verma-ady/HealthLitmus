@@ -2,17 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
     android:paddingLeft="3dp"
     android:paddingBottom="5dp"
     android:paddingRight="3dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.healthlitmus.Home">
+    tools:context="com.healthlitmus.Fragment.Home">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingBottom="15dp"
+        android:paddingTop="25dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -26,45 +30,68 @@
         android:orientation="vertical"
         android:id="@+id/linear_home_searchLocation"
         android:background="@drawable/custom_border"
-        android:padding="10dp" android:layout_margin="8dp">
+        android:padding="10dp"
+        android:layout_margin="8dp">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Search My Location"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="3dp"
-            android:background="#FF9100"
-            android:textColor="#ffffff"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+        <!--<Button-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Search My Location"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginTop="3dp"-->
+            <!--android:background="#FF9100"-->
+            <!--android:textColor="#ffffff"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textSize="18sp"/>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OR"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:padding="10dp"
-            android:layout_margin="10dp"/>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="OR"-->
+            <!--android:textSize="18dp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_gravity="center_horizontal|center_vertical"-->
+            <!--android:padding="10dp"-->
+            <!--android:layout_margin="10dp"/>-->
 
-    <Spinner
-        android:id="@+id/spinner_home_city"
+    <AutoCompleteTextView
+        android:id="@+id/actv_home_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp" />
+        android:layout_marginStart="5dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
+        android:textSize="20sp"
+        android:gravity="left"
+        android:textColor="#ffffff"
+        android:background="#FF9100"
+        android:padding="10dp"
+        android:paddingLeft="3dp"
+        android:paddingStart="3dp"
+        android:singleLine="true"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"/>
 
-    <Spinner
-        android:id="@+id/spinner_home_area"
+    <AutoCompleteTextView
+        android:id="@+id/actv_home_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="3dp"/>
+        android:layout_marginStart="5dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="3dp"
+        android:textSize="20sp"
+        android:gravity="left"
+        android:textColor="#ffffff"
+        android:background="#FF9100"
+        android:padding="10dp"
+        android:paddingLeft="3dp"
+        android:paddingStart="3dp"
+        android:singleLine="true" />
 
             </LinearLayout>
 
@@ -90,15 +117,24 @@
                 android:id="@+id/linear_home_testDetails"
                 android:background="@drawable/custom_border"
                 android:padding="10dp" android:layout_margin="8dp">
-                <com.healthlitmus.Helper.MultiSpinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:id="@+id/spinner_home_test"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="20dp" />
+                <MultiAutoCompleteTextView
+                    android:id="@+id/mactv_home_testDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="3dp"
+                    android:textSize="20sp"
+                    android:gravity="left"
+                    android:textColor="#ffffff"
+                    android:background="#FF9100"
+                    android:padding="10dp"
+                    android:paddingLeft="3dp"
+                    android:paddingStart="3dp"
+                    android:singleLine="true" />
 
             </LinearLayout>
 
@@ -116,7 +152,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/frame_home_testDetails"
+            android:layout_below="@+id/button_home_testDetails"
             android:text="Search"
             android:background="#FF9100"
             android:textColor="#ffffff"
@@ -127,4 +163,5 @@
             android:layout_marginTop="10dp"/>
 
     </RelativeLayout>
+    </ScrollView>
 </FrameLayout>

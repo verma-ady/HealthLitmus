@@ -11,7 +11,7 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="ThemeOverlay.LoginButton" parent="Base.ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">#FF3D00</item>
+        <item name="colorButtonNormal">#3b5998</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

@@ -11,6 +11,8 @@
         <item >What\'s Hot</item>
     </string-array>
 
+    <string name="fb_app_id">1674566216161415</string>
+
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
