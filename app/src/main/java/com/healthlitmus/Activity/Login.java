@@ -1,9 +1,10 @@
 package com.healthlitmus.Activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -25,6 +30,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.healthlitmus.Helper.ConnectionDetector;
+import com.healthlitmus.Helper.GradientOverImageDrawable;
 import com.healthlitmus.R;
 
 import org.json.JSONException;
@@ -35,10 +41,12 @@ import java.util.Arrays;
 
 public class Login extends AppCompatActivity {
 
+    ImageView imageViewBG;
+    Button buttonLogInHealthLitmus;
+    Animation animationButtonAlpha, animationTextViewFade;
+    TextView textViewNewUser;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    ProgressDialog dialog;
-    Button buttonHealthLitmus;
     LoginButton loginButton;
     Toolbar toolbar;
     CallbackManager callbackManager;
@@ -65,10 +73,21 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         FacebookSdk.sdkInitialize(getApplicationContext());
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
         sharedPreferences = getApplicationContext().getSharedPreferences("UserInfo", getApplicationContext().MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        setContentView(R.layout.activity_login);
+
+        imageViewBG = (ImageView) findViewById(R.id.background_login);
+        Bitmap bitmapBG = BitmapFactory.decodeResource(getResources(), R.drawable.bg);
+        int startColor = Color.argb(175, 0, 0, 0);
+        int endColor =Color.argb(175, 0, 0, 0);
+        GradientOverImageDrawable gradientOverImageDrawableBG = new GradientOverImageDrawable(getResources(), bitmapBG);
+        gradientOverImageDrawableBG.setGradientColors(startColor, endColor);
+        imageViewBG.setImageDrawable(gradientOverImageDrawableBG);
+
+        buttonLogInHealthLitmus = (Button) findViewById(R.id.button_login_hl);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_Login);
         // enabling toolbar
@@ -82,27 +101,79 @@ public class Login extends AppCompatActivity {
         Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 40, 40, true));
         getSupportActionBar().setLogo(d);
 
-        loginButton = (LoginButton) findViewById(R.id.buttonRegisterFacebook);
-        buttonHealthLitmus = (Button) findViewById(R.id.buttonRegisterHealthLitmus);
-        ButtonListener();
+        textViewNewUser = (TextView) findViewById(R.id.text_login_newuser);
 
+        Log.v("MyApp", getClass().toString() + " Not Logged In");
         updateWithToken(AccessToken.getCurrentAccessToken());
+        loginButton = (LoginButton) findViewById(R.id.buttonRegisterFacebook);
+        ButtonListener();
+        ViewListener();
+    }
+
+    private void ViewListener(){
+        textViewNewUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animationTextViewFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
+                animationTextViewFade.setDuration(250);
+                v.startAnimation(animationTextViewFade);
+                animationTextViewFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
+                animationTextViewFade.setDuration(250);
+                v.startAnimation(animationTextViewFade);
+                animationTextViewFade.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Intent intent = new Intent(Login.this, MyHealthLitmus.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
+        });
     }
 
     private void ButtonListener(){
-        buttonHealthLitmus.setOnClickListener(new View.OnClickListener() {
+       buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, MyHealthLitmus.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
+                animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
+                v.startAnimation(animationButtonAlpha);
+                animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        //code to login user
+                        Toast.makeText(getApplicationContext(), " Will Login User ", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
             }
         });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (false) {
+                    Toast.makeText(getApplicationContext(),"False",Toast.LENGTH_LONG).show();
+                    return;
+                }
                 FBLogin();
             }
         });
@@ -154,16 +225,16 @@ public class Login extends AppCompatActivity {
                         editor.putString("fname",object.getString("first_name"));
                         editor.putString("lname",object.getString("last_name"));
                         editor.putString("email", object.getString("email"));
+                        editor.putString("gender", CapitalizeWord(object.getString("gender")));
                         editor.commit();
 
                         Intent intent = new Intent(Login.this, MyHealthLitmus.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         finish();
 
                     } catch (JSONException e) {
-                        Log.v("MyApp", getClass().toString() +"LoginJSON");
-                        Toast.makeText(getApplicationContext(), "Unable to get your EMail-ID", Toast.LENGTH_LONG).show();
+                        Log.v("MyApp", getClass().toString() + "LoginJSON");
+//                        Toast.makeText(getApplicationContext(), "Unable to get your EMail-ID", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 }
@@ -181,11 +252,16 @@ public class Login extends AppCompatActivity {
         }
     }//updatewithtoken
 
+    private String CapitalizeWord ( String s) {
+        StringBuilder stringBuilder = new StringBuilder(s);
+        stringBuilder.setCharAt(0, Character.toUpperCase(s.charAt(0)));
+        return stringBuilder.toString();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
 
 }

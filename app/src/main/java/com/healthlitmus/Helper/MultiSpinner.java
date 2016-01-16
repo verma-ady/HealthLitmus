@@ -63,7 +63,7 @@ public class MultiSpinner extends Spinner implements
             spinnerText = defaultText;
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                R.layout.spinner_text, R.id.spinner_text_name,
+                R.layout.custom_text, R.id.custom_text_name,
                 new String[] { spinnerText });
         setAdapter(adapter);
         listener.onItemsSelected(selected);
@@ -100,7 +100,7 @@ public class MultiSpinner extends Spinner implements
 
         // all text on the spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                R.layout.spinner_text, R.id.spinner_text_name, new String[] { allText });
+                R.layout.custom_text, R.id.custom_text_name, new String[] { allText });
         setAdapter(adapter);
     }
 

@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -16,8 +17,13 @@
     </style>
 
     <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">#607D8B</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:shape">oval</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay.Spinner" parent="Base.Widget.AppCompat.Spinner" >
+        <item name="android:textColor">@color/colorPrimaryText</item>
     </style>
 
 </resources>

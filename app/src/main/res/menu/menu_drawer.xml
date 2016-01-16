@@ -40,6 +40,12 @@
             android:title="Offers"
             android:icon="@drawable/ic_people" />
 
+        <item
+            android:id="@+id/navigation_drawer_LogOut"
+            android:checked="false"
+            android:title="LogOut"
+            android:icon="@drawable/ic_people" />
+
     </group>
 
 

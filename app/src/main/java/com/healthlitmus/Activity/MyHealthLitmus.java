@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,12 +17,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.healthlitmus.Helper.AppController;
 import com.healthlitmus.Helper.DatabaseManager;
+import com.healthlitmus.Helper.GradientOverImageDrawable;
 import com.healthlitmus.R;
 
 import org.json.JSONArray;
@@ -43,8 +48,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyHealthLitmus extends AppCompatActivity {
+public class MyHealthLitmus extends AppCompatActivity implements Animation.AnimationListener {
 
+    ImageView imageViewBG;
     Toolbar toolbar;
     EditText editTextFName, editTextLName, editTextEmail, editTextAddress, editTextDOB, editTextPhone;
     Button buttonSubmit;
@@ -81,6 +87,14 @@ public class MyHealthLitmus extends AppCompatActivity {
         Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 40, 40, true));
         getSupportActionBar().setLogo(d);
 
+        imageViewBG = (ImageView) findViewById(R.id.background_MyHL);
+        Bitmap bitmapBG = BitmapFactory.decodeResource(getResources(), R.drawable.bg);
+        int startColor = Color.argb(175, 0, 0, 0);
+        int endColor =Color.argb(175, 0, 0, 0);
+        GradientOverImageDrawable gradientOverImageDrawableBG = new GradientOverImageDrawable(getResources(), bitmapBG);
+        gradientOverImageDrawableBG.setGradientColors(startColor, endColor);
+        imageViewBG.setImageDrawable(gradientOverImageDrawableBG);
+
         autoCompleteTextViewGender = (AutoCompleteTextView) findViewById(R.id.autoText_MyHealthLitmus_gender);
         ArrayAdapter<String> arrayAdapterGender = new ArrayAdapter<String>(MyHealthLitmus.this,
                 android.R.layout.simple_dropdown_item_1line, new String[]{"Male", "Female", "Other"});
@@ -99,13 +113,15 @@ public class MyHealthLitmus extends AppCompatActivity {
         Log.v("MyApp", getClass().toString() + "fname " + sharedPreferences.getString("fname", null) );
         Log.v("MyApp", getClass().toString() + "lname " + sharedPreferences.getString("lname", null) );
         Log.v("MyApp", getClass().toString() + "email " + sharedPreferences.getString("email", null) );
+        Log.v("MyApp", getClass().toString() + "gender " + sharedPreferences.getString("gender", null) );
 
         editTextFName.setText(sharedPreferences.getString("fname", null));
         editTextLName.setText(sharedPreferences.getString("lname", null) );
         editTextEmail.setText(sharedPreferences.getString("email", null) );
+        autoCompleteTextViewGender.setText(sharedPreferences.getString("gender", null));
 
         ViewListener();
-        SubmitButton();
+        ButtonListener();
     }
 
     private void ViewListener(){
@@ -120,7 +136,7 @@ public class MyHealthLitmus extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
-                    SubmitButton();
+                    SubmitData();
                     return true;
                 } else {
                     return false;
@@ -136,30 +152,47 @@ public class MyHealthLitmus extends AppCompatActivity {
         });
     }
 
-    private void SubmitButton (){
+    private void ButtonListener (){
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (editTextFName.length() != 0 && editTextLName.length() != 0 && editTextDOB.length() != 0 && editTextEmail.length() != 0 &&
-                        autoCompleteTextViewGender.length() != 0 && editTextAddress.length() != 0) {
-                    //code to make post request
-                    editor.putString("dob", editTextDOB.getText().toString());
-                    editor.putString("phone", editTextPhone.getText().toString());
-                    editor.putString("address", editTextAddress.getText().toString());
-                    editor.putString("gender", autoCompleteTextViewGender.getText().toString());
-                    editor.commit();
-                    progressDialog = new ProgressDialog(getApplicationContext());
-                    progressDialog.setMessage("Wait for a moment");
-                    progressDialog.setCancelable(false);
-                    progressDialog.setCanceledOnTouchOutside(false);
-                    progressDialog.show();
-                    volleyPOST("http://healthlitmus.com/patient/preregister.json");
-                } else {
-                    Toast.makeText(getApplicationContext(), "Fill Complete Form", Toast.LENGTH_LONG).show();
-                }
-
+                SubmitData();
             }
         });
+    }
+
+    private void SubmitData(){
+        if (editTextFName.length() != 0 && editTextLName.length() != 0 && editTextDOB.length() != 0 && editTextEmail.length() != 0 &&
+                autoCompleteTextViewGender.length() != 0 && editTextAddress.length() != 0) {
+            if(!isAlpha(editTextFName.getText().toString()) && !isAlpha(editTextLName.getText().toString() )) {
+                Toast.makeText(getApplicationContext(), "Name cannot contain Numeric Value", Toast.LENGTH_LONG).show();
+            } else if( !checkGender(autoCompleteTextViewGender.getText().toString())) {
+                Toast.makeText(getApplicationContext(), "Invalid Gender", Toast.LENGTH_LONG).show();
+            } else if (!isValidPhoneNumber(editTextPhone.getText().toString())) {
+                Toast.makeText(getApplicationContext(), "Invalid Mobile", Toast.LENGTH_LONG).show();
+            } else {
+                //code to make post request
+                editor.putString("fname",editTextFName.getText().toString());
+                editor.putString("lname",editTextLName.getText().toString());
+                editor.putString("email",editTextEmail.getText().toString());
+                editor.putString("dob", editTextDOB.getText().toString());
+                editor.putString("phone", editTextPhone.getText().toString());
+                editor.putString("address", editTextAddress.getText().toString());
+                editor.putString("gender", autoCompleteTextViewGender.getText().toString());
+                editor.commit();
+
+                progressDialog = new ProgressDialog(MyHealthLitmus.this);
+                progressDialog.setMessage("Wait for a moment");
+                progressDialog.setCancelable(false);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+
+                volleyPOST("http://healthlitmus.com/patient/preregister.json");
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Fill Complete Form", Toast.LENGTH_LONG).show();
+//            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -192,6 +225,7 @@ public class MyHealthLitmus extends AppCompatActivity {
                         try {
                             progressDialog.dismiss();
                             editor.putString("id", response.getJSONObject("user").getString("_id"));
+                            editor.putBoolean("login", true);
                             editor.commit();
                             Intent intent = new Intent(MyHealthLitmus.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -206,6 +240,7 @@ public class MyHealthLitmus extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.v("MyApp", getClass().toString() + " Error Post Request : " + error.toString() );
                 progressDialog.dismiss();
+                editor.putBoolean("login", true);
                 Intent intent = new Intent(MyHealthLitmus.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -229,6 +264,8 @@ public class MyHealthLitmus extends AppCompatActivity {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Content-Type", "application/json");
                 headers.put("Content-Language", "en-US");
+                Log.v("MyApp", getClass().toString()+ "getparams size  " + Integer.toString(getParams().size()) );
+                headers.put("Content-Length", Integer.toString(getParams().size()) );
                 headers.put("access-token", "");
                 return headers;
             }
@@ -236,4 +273,41 @@ public class MyHealthLitmus extends AppCompatActivity {
         AppController.getInstance().addToRequestQueue(req, tag_json_obj);
 
     }//
+
+    private boolean isAlpha( String s ){ // return true if only letters
+        for (char c: s.toCharArray() ) {
+            if( Character.isDigit(c) ){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkGender (String s ){ // return true if valid gender
+        if(s.equals("Male") || s.equals("Female") || s.equals("Other")){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean isValidPhoneNumber(String mobile) { //return true if valid 10 digitt number
+        String regEx = "^[0-9]{10}$";
+        return mobile.matches(regEx);
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+
+    }
 }
