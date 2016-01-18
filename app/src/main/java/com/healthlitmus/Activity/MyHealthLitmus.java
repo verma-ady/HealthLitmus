@@ -30,11 +30,14 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.healthlitmus.Helper.AppController;
 import com.healthlitmus.Helper.DatabaseManager;
 import com.healthlitmus.Helper.GradientOverImageDrawable;
@@ -61,6 +64,7 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
     private int DOB_date, DOB_month, DOB_year;
     public Calendar calender;
     ProgressDialog progressDialog;
+    Map<String, String> params = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +120,11 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
         Log.v("MyApp", getClass().toString() + "gender " + sharedPreferences.getString("gender", null) );
 
         editTextFName.setText(sharedPreferences.getString("fname", null));
-        editTextLName.setText(sharedPreferences.getString("lname", null) );
+        editTextLName.setText(sharedPreferences.getString("lname", null));
         editTextEmail.setText(sharedPreferences.getString("email", null) );
+        editTextPhone.setText(sharedPreferences.getString("phone", null) );
+        editTextAddress.setText(sharedPreferences.getString("address", null));
+        editTextDOB.setText(sharedPreferences.getString("dob", null));
         autoCompleteTextViewGender.setText(sharedPreferences.getString("gender", null));
 
         ViewListener();
@@ -187,6 +194,13 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
                 progressDialog.setCanceledOnTouchOutside(false);
                 progressDialog.show();
 
+                params.put("name", editTextFName.getText().toString() + " " + editTextLName.getText().toString());
+                params.put("email", editTextEmail.getText().toString());
+                params.put("birthday", editTextDOB.getText().toString());
+                params.put("gender", autoCompleteTextViewGender.getText().toString());
+                params.put("phone", editTextPhone.getText().toString());
+                params.put("address", editTextAddress.getText().toString());
+
                 volleyPOST("http://healthlitmus.com/patient/preregister.json");
             }
         } else {
@@ -217,14 +231,16 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
     private void volleyPOST(String url){
         String tag_json_obj = "json_obj_req";
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, url, null,
-                new Response.Listener<JSONObject>() {
+        StringRequest req = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.v("MyApp", getClass().toString() + " Response Post Request : " + response.toString() );
+                    public void onResponse(String response) {
+                        Log.v("MyApp", getClass().toString() + " Response Post Request : " + response );
                         try {
                             progressDialog.dismiss();
-                            editor.putString("id", response.getJSONObject("user").getString("_id"));
+                            JSONObject jsonObject = new JSONObject(response);
+                            JSONObject user = jsonObject.getJSONObject("user");
+                            editor.putString("id", user.getString("_id"));
                             editor.putBoolean("login", true);
                             editor.commit();
                             Intent intent = new Intent(MyHealthLitmus.this, MainActivity.class);
@@ -233,6 +249,7 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
                             finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Log.v("MyApp", getClass().toString() + " caught JSON error");
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -240,38 +257,25 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
             public void onErrorResponse(VolleyError error) {
                 Log.v("MyApp", getClass().toString() + " Error Post Request : " + error.toString() );
                 progressDialog.dismiss();
-                editor.putBoolean("login", true);
-                Intent intent = new Intent(MyHealthLitmus.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(MyHealthLitmus.this, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+//                finish();
             }
         }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("name", editTextFName.getText().toString() + " " + editTextLName.getText().toString());
-                params.put("email", editTextEmail.getText().toString());
-                params.put("birthday", editTextDOB.getText().toString());
-                params.put("gender", autoCompleteTextViewGender.getText().toString());
-                params.put("phone", editTextPhone.getText().toString());
-                params.put("address", editTextAddress.getText().toString());
                 return params;
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json");
-                headers.put("Content-Language", "en-US");
-                Log.v("MyApp", getClass().toString()+ "getparams size  " + Integer.toString(getParams().size()) );
-                headers.put("Content-Length", Integer.toString(getParams().size()) );
                 headers.put("access-token", "");
                 return headers;
             }
         };
         AppController.getInstance().addToRequestQueue(req, tag_json_obj);
-
     }//
 
     private boolean isAlpha( String s ){ // return true if only letters
