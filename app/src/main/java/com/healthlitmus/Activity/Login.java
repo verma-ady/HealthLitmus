@@ -228,18 +228,40 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             Log.v("MyApp", getClass().toString() + "Google handleSignInResult() if Login");
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            if(mGoogleApiClient.hasConnectedApi(Plus.API)){
+                Person person  = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                Log.v("MyApp", "--------------------------------");
+                String a[] = person.getDisplayName().split(" ");
 
-            Person person  = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            Log.v("MyApp", "--------------------------------");
-            String a[] = person.getDisplayName().split(" ");
-
-            try {
-                editor.putString("fname", a[0]);
-                editor.putString("lname", a[1]);
-                editor.putString("gender", person.getGender() == 0 ? "Male" : "Female");
-                editor.putString("email", acct.getEmail());
-            } catch (NullPointerException e ){
-                Log.v("MyApp", getClass().toString() + " NullPointerException" );
+                try {
+                    int sz = a.length;
+                    if(sz>2) {
+                        editor.putString("fname", a[0] + " " + a[1]);
+                        editor.putString("lname", a[2]);
+                    } else {
+                        editor.putString("fname", a[0]);
+                        editor.putString("lname", a[1]);
+                    }
+                    editor.putString("gender", person.getGender() == 0 ? "Male" : "Female");
+                    editor.putString("email", acct.getEmail());
+                } catch (NullPointerException e ){
+                    Log.v("MyApp", getClass().toString() + " NullPointerException" );
+                }
+            } else {
+                String a[] = acct.getDisplayName().split(" ");
+                try {
+                    int sz = a.length;
+                    if(sz>2) {
+                        editor.putString("fname", a[0] + " " + a[1]);
+                        editor.putString("lname", a[2]);
+                    } else {
+                        editor.putString("fname", a[0]);
+                        editor.putString("lname", a[1]);
+                    }
+                    editor.putString("email", acct.getEmail());
+                } catch (NullPointerException e ){
+                    Log.v("MyApp", getClass().toString() + " NullPointerException" );
+                }
             }
             editor.commit();
 //            Toast.makeText(this, "GOT IT", Toast.LENGTH_SHORT).show();
@@ -297,12 +319,11 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 //                    Bundle bFacebookData = getFacebookData(object);
                     try {
                         Log.v("MyApp", getClass().toString() + object.toString());
-                        Log.v("MyApp", getClass().toString() + object.getString("email"));
 
-                        editor.putString("fname",object.getString("first_name"));
+                        editor.putString("fname", object.getString("first_name"));
                         editor.putString("lname", object.getString("last_name"));
-                        editor.putString("email", object.getString("email"));
                         editor.putString("gender", CapitalizeWord(object.getString("gender")));
+                        editor.putString("email", object.getString("email"));
 
                     } catch (JSONException e) {
                         Log.v("MyApp", getClass().toString() + "LoginJSON");

@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="HealthLitmus"
-        android:textColor="@color/colorPrimaryText"
+        android:textColor="#FFFFFF"
         android:id="@+id/text_splash"
         android:layout_gravity="center"
         android:layout_marginBottom="120dp"

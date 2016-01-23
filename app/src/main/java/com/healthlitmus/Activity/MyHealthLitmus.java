@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -213,7 +214,16 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
     protected Dialog onCreateDialog(int id) {
         switch (id){
             case DATEPICKER:
-                DatePickerDialog datePickerDialog = new DatePickerDialog(MyHealthLitmus.this, dateSetListener, DOB_year, DOB_month, DOB_date);
+                DatePickerDialog datePickerDialog;
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // only for lollipop and newer versions
+                     datePickerDialog = new DatePickerDialog(MyHealthLitmus.this,
+                            R.style.MyThemeDate, dateSetListener, DOB_year, DOB_month, DOB_date);
+                } else {
+                    datePickerDialog = new DatePickerDialog(MyHealthLitmus.this,
+                            dateSetListener, DOB_year, DOB_month, DOB_date);
+                }
+
                 datePickerDialog.getDatePicker().setSpinnersShown(true);
                 return datePickerDialog;
             default:return null;

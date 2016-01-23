@@ -88,7 +88,7 @@ public class Search extends Fragment implements Animation.AnimationListener{
         actvArea.setDropDownBackgroundDrawable(gradientOverImageDrawableDropDown);
         mactvTest.setDropDownBackgroundDrawable(gradientOverImageDrawableDropDown);
 
-        progressDialog = new ProgressDialog(getContext());
+        progressDialog = new ProgressDialog(getContext(), R.style.MyThemeDialog);
         progressDialog.setMessage("Wait for a moment");
         progressDialog.setCancelable(true);
         progressDialog.setCanceledOnTouchOutside(true);
