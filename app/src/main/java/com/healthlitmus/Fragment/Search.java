@@ -35,7 +35,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -50,9 +49,9 @@ public class Search extends Fragment implements Animation.AnimationListener{
     AutoCompleteTextView actvCity, actvArea;
     MultiAutoCompleteTextView mactvTest;
     ProgressDialog progressDialog;
-    String cityArray[] = {"Pick a City"};
+    String cityArray[] = {""};
     int cityID[], citySelected;
-    String areaArray[] = {"Pick a City First"};
+    String areaArray[] = {""};
     int areaID[], areaSelected;
     String testArray[] = {};
     int testID[], testSelected[];
@@ -91,17 +90,14 @@ public class Search extends Fragment implements Animation.AnimationListener{
 
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Wait for a moment");
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(true);
         progressDialog.show();
 
         button = (Button) view.findViewById(R.id.button_home_submit);
 
         volleyRequestCity("http://healthlitmus.com/home/city.json");
 
-        actvCity.setHint("Select a City");
-        actvArea.setHint("Select a City First");
-        mactvTest.setHint("Select Location First");
         ButtonListener();
 //        ArrayList<String> listTest = new ArrayList<>(Arrays.asList(testArray));
 //        multiSpinner.setItems(listTest, "Select Location First", new MultiSpinner.MultiSpinnerListener() {
@@ -144,8 +140,8 @@ public class Search extends Fragment implements Animation.AnimationListener{
         actvCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                progressDialog.setCancelable(false);
-                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setCancelable(true);
+                progressDialog.setCanceledOnTouchOutside(true);
                 progressDialog.show();
                 if (cityLoaded) {
                     citySelected = searchCityID(actvCity.getText().toString());
@@ -170,8 +166,8 @@ public class Search extends Fragment implements Animation.AnimationListener{
         actvArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                progressDialog.setCancelable(false);
-                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setCancelable(true);
+                progressDialog.setCanceledOnTouchOutside(true);
                 progressDialog.show();
                 if (areaLoaded) {
                     areaSelected = searchAreaID(actvArea.getText().toString());
@@ -264,7 +260,6 @@ public class Search extends Fragment implements Animation.AnimationListener{
 
                         ArrayAdapter<String> adapterArea = new ArrayAdapter<String>(getActivity(), R.layout.custom_text,R.id.custom_text_name, areaArray);
                         actvArea.setAdapter(adapterArea);
-                        actvArea.setHint("Select an Area");
                         progressDialog.dismiss();
                         areaLoaded = true;
                     }
@@ -303,7 +298,6 @@ public class Search extends Fragment implements Animation.AnimationListener{
                                     R.id.custom_text_name, testArray);
                             mactvTest.setAdapter(adapterTest);
                             mactvTest.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-                            mactvTest.setHint("Select Medical Test");
                             progressDialog.dismiss();
                             areaLoaded = true;
 

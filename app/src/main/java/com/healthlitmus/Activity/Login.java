@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,10 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.common.Scopes;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -29,6 +32,17 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.People;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 import com.healthlitmus.Helper.ConnectionDetector;
 import com.healthlitmus.Helper.GradientOverImageDrawable;
 import com.healthlitmus.R;
@@ -39,12 +53,15 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int RC_SIGN_IN = 9001;
+    private GoogleApiClient mGoogleApiClient;
 
     ImageView imageViewBG;
-    Button buttonLogInHealthLitmus;
+    Button buttonLogInHealthLitmus, buttonLoginGooglePlus;
     Animation animationButtonAlpha, animationTextViewFade;
-    TextView textViewNewUser;
+    TextView textViewNewUser, textViewHead;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     LoginButton loginButton;
@@ -68,7 +85,6 @@ public class Login extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -87,9 +103,7 @@ public class Login extends AppCompatActivity {
         gradientOverImageDrawableBG.setGradientColors(startColor, endColor);
         imageViewBG.setImageDrawable(gradientOverImageDrawableBG);
 
-        buttonLogInHealthLitmus = (Button) findViewById(R.id.button_login_hl);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar_Login);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         // enabling toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -101,11 +115,29 @@ public class Login extends AppCompatActivity {
         Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 40, 40, true));
         getSupportActionBar().setLogo(d);
 
-        textViewNewUser = (TextView) findViewById(R.id.text_login_newuser);
-
-        Log.v("MyApp", getClass().toString() + " Not Logged In");
-        updateWithToken(AccessToken.getCurrentAccessToken());
+        buttonLogInHealthLitmus = (Button) findViewById(R.id.button_login_hl);
+        buttonLoginGooglePlus = (Button) findViewById(R.id.button_login_gplus);
         loginButton = (LoginButton) findViewById(R.id.buttonRegisterFacebook);
+        textViewNewUser = (TextView) findViewById(R.id.text_login_newuser);
+        textViewHead = (TextView) findViewById(R.id.text_login_head);
+
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder( GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.PLUS_LOGIN)).requestEmail().build();
+//        Log.v("MyApp", "onCreate() 1");
+        //Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this )
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(Plus.API).build();
+//
+//        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this )
+//                .addApi(Plus.API)
+//                .addScope(Scopes.PLUS_LOGIN)
+//                .addScope(Scopes.PLUS_ME)
+//                .build();
+
         ButtonListener();
         ViewListener();
     }
@@ -156,7 +188,8 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         //code to login user
-                        Toast.makeText(getApplicationContext(), " Will Login User ", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -170,15 +203,59 @@ public class Login extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (false) {
-                    Toast.makeText(getApplicationContext(),"False",Toast.LENGTH_LONG).show();
-                    return;
-                }
                 FBLogin();
+            }
+        });
+
+        buttonLoginGooglePlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
             }
         });
     }
 
+    // Google Sign In ---------------------------------------------------------------------------------------
+    private void signIn() {
+//        Log.v("MyApp", "signIn Login");
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.v("MyApp", "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            Log.v("MyApp", getClass().toString() + "Google handleSignInResult() if Login");
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            Person person  = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            Log.v("MyApp", "--------------------------------");
+            String a[] = person.getDisplayName().split(" ");
+
+            try {
+                editor.putString("fname", a[0]);
+                editor.putString("lname", a[1]);
+                editor.putString("gender", person.getGender() == 0 ? "Male" : "Female");
+                editor.putString("email", acct.getEmail());
+            } catch (NullPointerException e ){
+                Log.v("MyApp", getClass().toString() + " NullPointerException" );
+            }
+            editor.commit();
+//            Toast.makeText(this, "GOT IT", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MyHealthLitmus.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            } else {
+            // Signed out, show unauthenticated UI.
+            Log.v("MyApp", getClass().toString() + "Google handleSignInResult() else Login");
+            Toast.makeText(this, "Connect to Internet to Sign In", Toast.LENGTH_SHORT).show();
+        }
+    }
+    //--------------------------------------------------------------------------------------- Google Sign In
+
+    // FaceBook Sign In ---------------------------------------------------------------------------------------
     private void FBLogin(){
         ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
         if( connectionDetector.isConnectingToInternet() ) {
@@ -219,24 +296,24 @@ public class Login extends AppCompatActivity {
                     // Get facebook data from login
 //                    Bundle bFacebookData = getFacebookData(object);
                     try {
-                        Log.v("MyApp", getClass().toString() +object.toString() );
+                        Log.v("MyApp", getClass().toString() + object.toString());
                         Log.v("MyApp", getClass().toString() + object.getString("email"));
 
                         editor.putString("fname",object.getString("first_name"));
-                        editor.putString("lname",object.getString("last_name"));
+                        editor.putString("lname", object.getString("last_name"));
                         editor.putString("email", object.getString("email"));
                         editor.putString("gender", CapitalizeWord(object.getString("gender")));
-                        editor.commit();
-
-                        Intent intent = new Intent(Login.this, MyHealthLitmus.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        finish();
 
                     } catch (JSONException e) {
                         Log.v("MyApp", getClass().toString() + "LoginJSON");
 //                        Toast.makeText(getApplicationContext(), "Unable to get your EMail-ID", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
+                    editor.commit();
+                    Intent intent = new Intent(Login.this, MyHealthLitmus.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
                 }
             });
 
@@ -251,6 +328,7 @@ public class Login extends AppCompatActivity {
 //            dialog.dismiss();
         }
     }//updatewithtoken
+    //--------------------------------------------------------------------------------------- FaceBook Sign In
 
     private String CapitalizeWord ( String s) {
         StringBuilder stringBuilder = new StringBuilder(s);
@@ -261,7 +339,21 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            Log.v("MyApp", getClass().toString() + " onActivityResult If ");
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        } else{
+            Log.v("MyApp", getClass().toString() + " onActivityResult Else ");
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
+    //Google onConnectionFailed -----------------------------------------------------------------------------------
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d("MyApp", "onConnectionFailed:" + connectionResult);
+    }
 }

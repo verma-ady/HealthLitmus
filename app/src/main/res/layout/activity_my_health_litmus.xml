@@ -21,13 +21,13 @@
         android:orientation="vertical" >
 
         <include
-            android:id="@+id/toolbar_MyHealthLitmus"
             layout="@layout/toolbar" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Please Fill in Details to Make new Account"
+            android:text="New User! Sign Up Now"
+            android:gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"

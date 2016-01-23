@@ -5,11 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.healthlitmus.Fragment.Login">
 
-    <include
-        android:id="@+id/toolbar_Login"
-        layout="@layout/toolbar"
-        />
-
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,9 +12,13 @@
         android:src="@drawable/bg"
         android:scaleType="centerCrop" />
 
+    <include
+        layout="@layout/toolbar" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/text_login_head"
         android:text="Health Litmus"
         android:textSize="30sp"
         android:textColor="@color/colorPrimaryText"
@@ -37,20 +36,44 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_gravity="top"
             android:paddingRight="20dp"
             android:paddingEnd="20dp"
             android:paddingLeft="20dp"
             android:paddingStart="20dp">
 
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_login_gplus"
+                android:text="Login in with G+"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:drawableLeft="@drawable/goole_plus"
+                android:background="#E02F2F"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="10dp" />
+
+            <!--<Button-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/fblogin"-->
+                <!--android:drawableLeft="@drawable/fb_login"-->
+                <!--android:background="#3B5998"-->
+                <!--android:layout_marginBottom="10dp"-->
+                <!--android:layout_marginTop="10dp" />-->
+
             <com.facebook.login.widget.LoginButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonRegisterFacebook"
                 android:padding="10dp"
                 android:layout_weight="1"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginEnd="2dp" />

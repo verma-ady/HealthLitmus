@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#DD2C00</color>
     <color name="colorPrimaryDark">#B32200</color>
-    <color name="colorAccent">#40A121</color>
+    <color name="colorAccent">#FFFFFF</color>
     <color name="colorButton">#DD2C00</color>
 
     <!--<color name="colorPrimaryText">#212121</color>-->
@@ -11,6 +11,7 @@
     <color name="colorDivider">#B6B6B6</color>
 
     <color name="colorPrimaryText">#FFFFFF</color>
-    <color name="colorSecondaryText">#212121</color>
+    <color name="colorSecondaryText">#FFFFFF</color>
+    <color name="transparent">@android:color/transparent</color>
 
 </resources>

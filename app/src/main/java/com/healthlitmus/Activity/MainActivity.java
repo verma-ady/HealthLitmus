@@ -16,8 +16,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.healthlitmus.Fragment.Search;
-import com.healthlitmus.Fragment.TestResult;
 
+import com.healthlitmus.Fragment.TestResult;
 import com.healthlitmus.R;
 
 public class MainActivity extends ActionBarActivity {
@@ -26,6 +26,7 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Search search;
+    private TestResult testResult;
     private SharedPreferences sharedPreferences;
 
 
@@ -33,14 +34,14 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        testResult = new TestResult();
         search = new Search();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.framelayout_home, search);
         fragmentTransaction.commit();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_Main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         // enabling toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

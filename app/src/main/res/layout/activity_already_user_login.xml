@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.healthlitmus.Activity.AlreadyUserLogin"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/background_AlreadyUser"
+        android:src="@drawable/bg"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <include
+            layout="@layout/toolbar" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login Using My Health Litmus Account"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="17sp"
+            android:textColor="@color/colorPrimaryText"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/custom_border"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/edit_AlreadyUser_email"
+                            android:hint="Email"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="10dp"
+                            android:imeOptions="actionNext"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/colorPrimaryText"
+                            android:textColorHint="@color/colorPrimaryText"/>
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/edit_AlreadyUser_password"
+                            android:hint="Password"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="3dp"
+                            android:imeOptions="actionNext"
+                            android:inputType="textPassword"
+                            android:textColor="@color/colorPrimaryText"
+                            android:textColorHint="@color/colorPrimaryText"/>
+
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Login"
+                        android:id="@+id/button_AlreadyUser_login"
+                        android:background="@drawable/custom_border"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:layout_margin="5dp"/>
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+
+</FrameLayout>

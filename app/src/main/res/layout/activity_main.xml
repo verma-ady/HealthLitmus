@@ -18,7 +18,6 @@
         android:id="@+id/linearLayout"
         >
         <include
-            android:id="@+id/toolbar_Main"
             layout="@layout/toolbar"
             />
         <FrameLayout

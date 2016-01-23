@@ -78,7 +78,7 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
         DOB_date = calender.get(Calendar.DATE);
         DOB_month = calender.get(Calendar.MONTH);
         DOB_year = calender.get(Calendar.YEAR);
-        toolbar = (Toolbar) findViewById(R.id.toolbar_MyHealthLitmus);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // enabling toolbar
         setSupportActionBar(toolbar);
@@ -131,7 +131,7 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
         ButtonListener();
     }
 
-    private void ViewListener(){
+    private void ViewListener() {
         editTextDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

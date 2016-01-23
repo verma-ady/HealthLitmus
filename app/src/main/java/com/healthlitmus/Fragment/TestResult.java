@@ -1,6 +1,9 @@
 package com.healthlitmus.Fragment;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -11,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +26,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.healthlitmus.Helper.AppController;
 import com.healthlitmus.Helper.ContentTestResult;
 import com.healthlitmus.Helper.CustomLinearLayoutManager;
+import com.healthlitmus.Helper.GradientOverImageDrawable;
 import com.healthlitmus.R;
 
 import org.json.JSONArray;
@@ -44,12 +49,21 @@ public class TestResult extends Fragment {
     private RVAdapter rvAdapter;
     private RecyclerView recyclerView;
     ProgressDialog progressDialog;
+    ImageView imageViewBG;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_test_result, container, false);
+
+        imageViewBG = (ImageView) view.findViewById(R.id.background_test);
+        Bitmap bitmapBG = BitmapFactory.decodeResource(getResources(), R.drawable.bg);
+        int startColor = Color.argb(175, 0, 0, 0);
+        int endColor =Color.argb(175, 0, 0, 0);
+        GradientOverImageDrawable gradientOverImageDrawableBG = new GradientOverImageDrawable(getResources(), bitmapBG);
+        gradientOverImageDrawableBG.setGradientColors(startColor, endColor);
+        imageViewBG.setImageDrawable(gradientOverImageDrawableBG);
 
         contentTestResult = new ContentTestResult();
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_card_test);
@@ -65,7 +79,7 @@ public class TestResult extends Fragment {
 //        progressDialog.show();
 //        volleyRequestTest("http://healthlitmus.com/medicaltest/appsearch.json?city=3&area=7680&test%5B%5D=24");
         contentTestResult.clear();
-        contentTestResult.addItem(new ContentTestResult.DummyItem("XYZ Labs", "CCD", 20));
+        contentTestResult.addItem(new ContentTestResult.DummyItem("XYZ Labs", "CCD", 10));
 //        contentTestResult.addItem(new ContentTestResult.DummyItem("EFG", "MNO", 2));
 
         rvAdapter=new RVAdapter(contentTestResult.ITEMS);
