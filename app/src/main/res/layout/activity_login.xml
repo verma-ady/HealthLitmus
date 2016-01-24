@@ -15,17 +15,48 @@
     <include
         layout="@layout/toolbar" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/text_login_head"
-        android:text="Health Litmus"
-        android:textSize="30sp"
-        android:textColor="@color/colorPrimaryText"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="60dp"
-        android:padding="20dp" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_login_head1"
+            android:text="Health"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:textAllCaps="true"
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimaryText"
+            android:gravity="end|center_vertical"
+            android:layout_marginTop="60dp"
+            android:paddingTop="20dp"
+            android:paddingStart="20dp"
+            android:paddingLeft="20dp"
+            android:paddingEnd="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="20dp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_login_head2"
+            android:text="Litmus"
+            android:layout_weight="1"
+            android:textAllCaps="true"
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimaryText"
+            android:gravity="start|center_vertical"
+            android:layout_marginTop="60dp"
+            android:paddingTop="20dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:paddingEnd="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="20dp"/>
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,10 +79,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/button_login_gplus"
                 android:text="Login with Google+"
+                android:gravity="start|center_vertical"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:drawableLeft="@drawable/goole_plus"
-                android:background="#E02F2F"
+                android:paddingLeft="8dp"
+                android:paddingStart="8dp"
+                android:paddingRight="8dp"
+                android:paddingEnd="8dp"
+                android:background="#CA4738"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="10dp"
                 android:textAllCaps="false"/>
@@ -60,6 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonRegisterFacebook"
+                android:gravity="center_horizontal"
                 android:padding="10dp"
                 android:layout_weight="1"
                 android:layout_marginTop="5dp"

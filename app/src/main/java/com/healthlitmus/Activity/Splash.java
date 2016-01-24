@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.healthlitmus.Helper.GradientOverImageDrawable;
@@ -17,9 +19,10 @@ import com.healthlitmus.R;
 public class Splash extends Activity {
 
 
-    TextView textView;
+    TextView textViewHead1, textViewHead2;
     Animation animation;
     ImageView imageViewBG;
+    LinearLayout linearLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +36,16 @@ public class Splash extends Activity {
         gradientOverImageDrawableBG.setGradientColors(startColor, endColor);
         imageViewBG.setImageDrawable(gradientOverImageDrawableBG);
 
-        textView = (TextView) findViewById(R.id.text_splash);
+        textViewHead1 = (TextView) findViewById(R.id.text_login_head1);
+        Typeface narrow = Typeface.createFromAsset(getAssets(), "fonts/arial_narrow.ttf");
+        textViewHead1.setTypeface(narrow, Typeface.BOLD);
+        textViewHead2 = (TextView) findViewById(R.id.text_login_head2);
+        textViewHead2.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/arial_narrow.ttf"));
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+
         animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
         animation.setDuration(2000);
-        textView.startAnimation(animation);
+        linearLayout.startAnimation(animation);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {

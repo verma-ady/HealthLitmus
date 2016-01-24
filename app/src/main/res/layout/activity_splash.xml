@@ -11,16 +11,47 @@
         android:src="@drawable/bg"
         android:scaleType="centerCrop" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="HealthLitmus"
-        android:textColor="#FFFFFF"
-        android:id="@+id/text_splash"
-        android:layout_gravity="center"
-        android:layout_marginBottom="120dp"
-        android:textSize="35sp"
-        android:padding="20dp"
-        />
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/linearLayout">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_login_head1"
+            android:text="Health"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:textAllCaps="true"
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimaryText"
+            android:gravity="end|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingLeft="20dp"
+            android:paddingEnd="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_login_head2"
+            android:text="Litmus"
+            android:layout_weight="1"
+            android:textAllCaps="true"
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimaryText"
+            android:gravity="start|center_vertical"
+            android:paddingTop="20dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:paddingEnd="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="20dp"/>
+
+    </LinearLayout>
+
 
 </FrameLayout>

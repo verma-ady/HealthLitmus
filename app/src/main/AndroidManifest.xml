@@ -25,27 +25,32 @@
         <activity
             android:name=".Activity.Login"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" >
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+             <!--<intent-filter>-->
+                 <!--<action android:name="android.intent.action.MAIN" />-->
+                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
+             <!--</intent-filter>-->
         </activity>
+
+
         <activity
             android:name=".Activity.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" >
         </activity>
+
+
         <activity
             android:name=".Activity.MyHealthLitmus"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" >
         </activity>
+
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+
         <activity android:name=".Activity.Splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,8 +58,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
         <activity android:name=".Activity.AlreadyUserLogin" >
         </activity>
+
+
     </application>
 
 </manifest>

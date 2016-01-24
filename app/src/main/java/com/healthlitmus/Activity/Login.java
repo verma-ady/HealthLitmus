@@ -5,12 +5,20 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -44,6 +52,7 @@ import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.healthlitmus.Helper.ConnectionDetector;
+import com.healthlitmus.Helper.CustomTypeFaceSpan;
 import com.healthlitmus.Helper.GradientOverImageDrawable;
 import com.healthlitmus.R;
 
@@ -61,7 +70,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     ImageView imageViewBG;
     Button buttonLogInHealthLitmus, buttonLoginGooglePlus;
     Animation animationButtonAlpha, animationTextViewFade;
-    TextView textViewNewUser, textViewHead;
+    TextView textViewNewUser, textViewHead1, textViewHead2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     LoginButton loginButton;
@@ -110,7 +119,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Drawable dr = getResources().getDrawable(R.drawable.health);
+        Drawable dr = ContextCompat.getDrawable(getApplicationContext(),R.drawable.health);
         Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
         Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 40, 40, true));
         getSupportActionBar().setLogo(d);
@@ -119,7 +128,20 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         buttonLoginGooglePlus = (Button) findViewById(R.id.button_login_gplus);
         loginButton = (LoginButton) findViewById(R.id.buttonRegisterFacebook);
         textViewNewUser = (TextView) findViewById(R.id.text_login_newuser);
-        textViewHead = (TextView) findViewById(R.id.text_login_head);
+
+        textViewHead1 = (TextView) findViewById(R.id.text_login_head1);
+        Typeface narrow = Typeface.createFromAsset(getAssets(), "fonts/arial_narrow.ttf");
+        textViewHead1.setTypeface(narrow, Typeface.BOLD);
+        textViewHead2 = (TextView) findViewById(R.id.text_login_head2);
+        textViewHead2.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/arial_narrow.ttf"));
+
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.google_login);
+        drawable.setBounds(0, 0, 80, 80);
+        buttonLoginGooglePlus.setCompoundDrawables(drawable, null, null, null);
+
+        drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.fb_login);
+        drawable.setBounds(0, 0, 64, 64);
+        loginButton.setCompoundDrawables(drawable, null, null, null);
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
@@ -175,20 +197,20 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     private void ButtonListener(){
        buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
-                v.startAnimation(animationButtonAlpha);
-                animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+           @Override
+           public void onClick(View v) {
+               animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
+               v.startAnimation(animationButtonAlpha);
+               animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
+                   @Override
+                   public void onAnimationStart(Animation animation) {
 
-                    }
+                   }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        //code to login user
-                        Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
+                   @Override
+                   public void onAnimationEnd(Animation animation) {
+                       //code to login user
+                       Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
                         startActivity(intent);
                     }
 
