@@ -129,21 +129,30 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
                                     }
                                 });
                             }
+                            editor.remove("fname");
+                            editor.remove("lname");
+                            editor.remove("email");
+                            editor.remove("dob");
+                            editor.remove("phone");
+                            editor.remove("address");
+                            editor.remove("gender");
+                            editor.remove("login");
+                            editor.commit();
                         } else if (sharedPreferences.getString("loginVia", null ).equals("fb")){
                             LoginManager.getInstance().logOut();
                             Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_LONG).show();
+                            editor.remove("fname");
+                            editor.remove("lname");
+                            editor.remove("email");
+                            editor.remove("dob");
+                            editor.remove("phone");
+                            editor.remove("address");
+                            editor.remove("gender");
+                            editor.remove("login");
+                            editor.commit();
                         } else{
                             Toast.makeText(getApplicationContext(), "First Login", Toast.LENGTH_LONG).show();
                         }
-                        editor.remove("fname");
-                        editor.remove("lname");
-                        editor.remove("email");
-                        editor.remove("dob");
-                        editor.remove("phone");
-                        editor.remove("address");
-                        editor.remove("gender");
-                        editor.remove("login");
-                        editor.commit();
                 }
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
