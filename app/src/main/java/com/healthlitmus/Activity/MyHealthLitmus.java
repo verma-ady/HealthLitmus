@@ -39,6 +39,17 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
 import com.healthlitmus.Helper.AppController;
 import com.healthlitmus.Helper.DatabaseManager;
 import com.healthlitmus.Helper.GradientOverImageDrawable;
@@ -52,7 +63,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyHealthLitmus extends AppCompatActivity implements Animation.AnimationListener {
+public class MyHealthLitmus extends AppCompatActivity implements Animation.AnimationListener,
+        GoogleApiClient.OnConnectionFailedListener {
 
     ImageView imageViewBG;
     Toolbar toolbar;
@@ -67,8 +79,11 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
     ProgressDialog progressDialog;
     Map<String, String> params = new HashMap<String, String>();
 
+    private GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_health_litmus);
 
@@ -80,6 +95,17 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
         DOB_month = calender.get(Calendar.MONTH);
         DOB_year = calender.get(Calendar.YEAR);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder( GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.PLUS_LOGIN)).requestEmail().build();
+//        Log.v("MyApp", "onCreate() 1");
+        //Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this )
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(Plus.API).build();
 
         // enabling toolbar
         setSupportActionBar(toolbar);
@@ -130,6 +156,58 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
 
         ViewListener();
         ButtonListener();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(sharedPreferences.getString("loginVia", null ).equals("google")) {
+            if (mGoogleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        Toast.makeText(getApplicationContext(), "Logged Out of Google ", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        } else if (sharedPreferences.getString("loginVia", null ).equals("fb")){
+            LoginManager.getInstance().logOut();
+            Toast.makeText(getApplicationContext(), "Logged Out of Facebook ", Toast.LENGTH_LONG).show();
+        }
+        editor.remove("fname");
+        editor.remove("lname");
+        editor.remove("email");
+        editor.remove("dob");
+        editor.remove("phone");
+        editor.remove("address");
+        editor.remove("gender");
+        editor.commit();
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onStop() {
+        if(sharedPreferences.getString("loginVia", null ).equals("google")) {
+            if (mGoogleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        Toast.makeText(getApplicationContext(), "Logged Out of Google ", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        } else if (sharedPreferences.getString("loginVia", null ).equals("fb")){
+            LoginManager.getInstance().logOut();
+            Toast.makeText(getApplicationContext(), "Logged Out of Facebook ", Toast.LENGTH_LONG).show();
+        }
+        editor.remove("fname");
+        editor.remove("lname");
+        editor.remove("email");
+        editor.remove("dob");
+        editor.remove("phone");
+        editor.remove("address");
+        editor.remove("gender");
+        editor.commit();
+        super.onStop();
     }
 
     private void ViewListener() {
@@ -324,4 +402,32 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
     public void onAnimationRepeat(Animation animation) {
 
     }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+//    @Override
+//    public void onConnected(Bundle bundle) {
+//        Log.v("MyApp",getClass().toString() +"onConnected");
+//        if (ShopRunDataStore.LoginGoogle) {
+//            Log.v("MyApp",getClass().toString() + " Google logged in");
+//            Toast.makeText(this, "User is connected to Google+", Toast.LENGTH_LONG).show();
+//            // Get user's information
+//            getProfileInformation();
+//        } else {
+//            Log.v("MyApp",getClass().toString() +"In if condition to log off");
+//            if (mGoogleApiClient.isConnected()) {
+//                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+//                mGoogleApiClient.disconnect();
+//                // mGoogleApiClient.connect();
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void onConnectionSuspended(int i) {
+//
+//    }
 }

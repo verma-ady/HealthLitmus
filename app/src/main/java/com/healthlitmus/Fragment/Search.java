@@ -38,7 +38,7 @@ import org.json.JSONObject;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Search extends Fragment implements Animation.AnimationListener{
+public class Search extends Fragment{
 
 
     public Search() {
@@ -123,7 +123,26 @@ public class Search extends Fragment implements Animation.AnimationListener{
             public void onClick(View v) {
                 animationButton = AnimationUtils.loadAnimation(getContext(), R.anim.aplha);
                 v.startAnimation(animationButton);
-                animationButton.setAnimationListener(Search.this);
+                animationButton.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        testResult = new TestResult();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction;
+                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.framelayout_home, testResult).addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
             }
         });
     }
@@ -334,27 +353,5 @@ public class Search extends Fragment implements Animation.AnimationListener{
             }
         }
         return -1;
-    }
-
-    @Override
-    public void onAnimationStart(Animation animation) {
-
-    }
-
-    @Override
-    public void onAnimationEnd(Animation animation) {
-        if (animation == animationButton) {
-//            Toast.makeText(getContext(), "Animation Stopped", Toast.LENGTH_SHORT).show();
-            testResult = new TestResult();
-            android.support.v4.app.FragmentTransaction fragmentTransaction;
-            fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.framelayout_home, testResult).addToBackStack(null);
-            fragmentTransaction.commit();
-        }
-    }
-
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-
     }
 }

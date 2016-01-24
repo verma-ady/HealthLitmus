@@ -15,12 +15,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
+import com.healthlitmus.Fragment.Home;
 import com.healthlitmus.Fragment.Search;
 
 import com.healthlitmus.Fragment.TestResult;
 import com.healthlitmus.R;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
@@ -28,18 +39,33 @@ public class MainActivity extends ActionBarActivity {
     private Search search;
     private TestResult testResult;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Home home;
 
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        home = new Home();
         testResult = new TestResult();
         search = new Search();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.framelayout_home, search);
+        fragmentTransaction.replace(R.id.framelayout_home, home);
         fragmentTransaction.commit();
+
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder( GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.PLUS_LOGIN)).requestEmail().build();
+//        Log.v("MyApp", "onCreate() 1");
+        //Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this )
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).addApi(Plus.API).build();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         // enabling toolbar
@@ -49,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         sharedPreferences = getApplicationContext().getSharedPreferences("UserInfo", getApplicationContext().MODE_PRIVATE);
-
+        editor = sharedPreferences.edit();
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
@@ -93,6 +119,31 @@ public class MainActivity extends ActionBarActivity {
                         Toast.makeText(getApplicationContext(), "Yet To be Developed", Toast.LENGTH_LONG).show();
                         break;
 
+                    case R.id.navigation_drawer_LogOut:
+                        if(sharedPreferences.getString("loginVia", null ).equals("google")) {
+                            if (mGoogleApiClient.isConnected()) {
+                                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        } else if (sharedPreferences.getString("loginVia", null ).equals("fb")){
+                            LoginManager.getInstance().logOut();
+                            Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_LONG).show();
+                        } else{
+                            Toast.makeText(getApplicationContext(), "First Login", Toast.LENGTH_LONG).show();
+                        }
+                        editor.remove("fname");
+                        editor.remove("lname");
+                        editor.remove("email");
+                        editor.remove("dob");
+                        editor.remove("phone");
+                        editor.remove("address");
+                        editor.remove("gender");
+                        editor.remove("login");
+                        editor.commit();
                 }
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
@@ -168,5 +219,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

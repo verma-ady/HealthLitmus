@@ -8,22 +8,14 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,13 +38,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.healthlitmus.Helper.ConnectionDetector;
-import com.healthlitmus.Helper.CustomTypeFaceSpan;
 import com.healthlitmus.Helper.GradientOverImageDrawable;
 import com.healthlitmus.R;
 
@@ -182,6 +171,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
+                        editor.putString("loginVia", "hlNew");
+                        editor.commit();
                         Intent intent = new Intent(Login.this, MyHealthLitmus.class);
                         startActivity(intent);
                     }
@@ -199,6 +190,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
        buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
+               editor.putString("loginVia", "hl");
+               editor.commit();
                animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
                v.startAnimation(animationButtonAlpha);
                animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
@@ -225,6 +218,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editor.putString("loginVia", "fb");
+                editor.commit();
                 FBLogin();
             }
         });
@@ -240,6 +235,8 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     // Google Sign In ---------------------------------------------------------------------------------------
     private void signIn() {
 //        Log.v("MyApp", "signIn Login");
+        editor.putString("loginVia", "google");
+        editor.commit();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }

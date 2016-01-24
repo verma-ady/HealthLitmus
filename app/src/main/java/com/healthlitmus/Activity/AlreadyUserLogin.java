@@ -67,7 +67,7 @@ public class AlreadyUserLogin extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Login User", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Login User. Yet To be Developed", Toast.LENGTH_SHORT).show();
             }
         });
     }
