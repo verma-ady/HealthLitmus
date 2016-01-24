@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Health Litmus</string>
+    <string name="app_name">HealthLitmus</string>
     <string name="action_settings">Settings</string>
     <string name="action_profile">Profile</string>
 
@@ -14,7 +14,8 @@
     </string-array>
 
     <string name="fb_app_id">1674566216161415</string>
-    <string name="com_facebook_loginview_log_in_button">Connect</string>
+    <string name="com_facebook_loginview_log_out_button">Logout with Facebook</string>
+    <string name="com_facebook_loginview_log_in_button_long">Login with Facebook</string>
 
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->

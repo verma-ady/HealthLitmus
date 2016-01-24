@@ -43,28 +43,18 @@
             android:paddingLeft="20dp"
             android:paddingStart="20dp">
 
-
-
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/button_login_gplus"
-                android:text="Login in with G+"
+                android:text="Login with Google+"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:drawableLeft="@drawable/goole_plus"
                 android:background="#E02F2F"
                 android:layout_marginBottom="5dp"
-                android:layout_marginTop="10dp" />
-
-            <!--<Button-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/fblogin"-->
-                <!--android:drawableLeft="@drawable/fb_login"-->
-                <!--android:background="#3B5998"-->
-                <!--android:layout_marginBottom="10dp"-->
-                <!--android:layout_marginTop="10dp" />-->
+                android:layout_marginTop="10dp"
+                android:textAllCaps="false"/>
 
             <com.facebook.login.widget.LoginButton
                 android:layout_width="match_parent"
@@ -74,9 +64,9 @@
                 android:layout_weight="1"
                 android:layout_marginTop="5dp"
                 android:textSize="18sp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginEnd="2dp" />
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:layout_marginBottom="10dp" />
 
         </LinearLayout>
 
@@ -84,8 +74,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/button_login_hl"
+            android:textSize="18sp"
             android:textColor="@color/colorPrimaryText"
-            android:text="Login with HealthLitmus Account"
+            android:text="Login with HealthLitmus"
+            android:textAllCaps="false"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginRight="20dp"
