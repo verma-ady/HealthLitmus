@@ -14,6 +14,10 @@
     <color name="colorSecondaryText">#FFFFFF</color>
     <color name="transparent">@android:color/transparent</color>
 
-    <color name="com_facebook_blue">#346DA6</color>
+    <color name="com_facebook_blue">#415DAE</color>
+    <color name="facebookPressed">#153080</color>
+
+    <color name="google_login">#CA4738</color>
+    <color name="googlePressed">#810F03</color>
 
 </resources>

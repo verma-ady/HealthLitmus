@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.Scopes;
 
@@ -62,7 +63,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     ImageView imageViewBG;
     Button buttonLogInHealthLitmus, buttonLoginGooglePlus, buttonLogInFB;
-    Animation animationButtonAlpha, animationTextViewFade;
+    Animation animationButtonAlpha, animationTextViewFade, animationButtonScale;
     TextView textViewNewUser, textViewHead1, textViewHead2;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -173,15 +174,17 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         ButtonListener();
         ViewListener();
+        Ripple();
+    }
+
+    private void Ripple(){
+        MaterialRippleLayout.on(buttonLogInHealthLitmus).rippleColor(Color.BLACK).create();
     }
 
     private void ViewListener(){
         textViewNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animationTextViewFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
-                animationTextViewFade.setDuration(250);
-                v.startAnimation(animationTextViewFade);
                 animationTextViewFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 animationTextViewFade.setDuration(250);
                 v.startAnimation(animationTextViewFade);
@@ -210,65 +213,103 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     private void ButtonListener(){
 
+        buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.putString("loginVia", "hl");
+                editor.commit();
+                animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
+                v.startAnimation(animationButtonAlpha);
+                animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) { }
 
-    buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            editor.putString("loginVia", "hl");
-            editor.commit();
-            animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
-            v.startAnimation(animationButtonAlpha);
-            animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) { }
+                    @Override
+                    public void onAnimationEnd(Animation animation){
+                        //code to login user
+                        Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
+                        startActivity(intent);
+                    }
 
-                @Override
-                public void onAnimationEnd(Animation animation){
-                    //code to login user
-                    Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) { }
-            });
-        }
-    });
+                    @Override
+                    public void onAnimationRepeat(Animation animation) { }
+                });
+            }
+        });
 
         buttonLogInFB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editor.putString("loginVia", "fb");
                 editor.commit();
-                loginButton = new LoginButton(Login.this);
-                loginButton.performClick();
-                accessTokenTracker = new AccessTokenTracker() {
+                animationButtonScale = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale);
+                v.startAnimation(animationButtonScale);
+                animationButtonScale.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                        updateWithToken(newAccessToken);
+                    public void onAnimationStart(Animation animation) {
+                        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.fb_pressed);
+                        drawable.setBounds(0, 0, 64, 64);
+                        buttonLogInFB.setCompoundDrawables(drawable, null, null, null);
+                        buttonLogInFB.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.facebookPressed));
                     }
-                };
 
-                callbackManager = CallbackManager.Factory.create();
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.fb_login);
+                        drawable.setBounds(0, 0, 64, 64);
+                        buttonLogInFB.setCompoundDrawables(drawable, null, null, null);
+                        buttonLogInFB.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.com_facebook_blue));
+                        loginButton = new LoginButton(Login.this);
+                        loginButton.performClick();
+                        accessTokenTracker = new AccessTokenTracker() {
+                            @Override
+                            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
+                                updateWithToken(newAccessToken);
+                            }
+                        };
 
-                loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-                loginButton.registerCallback(callbackManager, callback);
+                        callbackManager = CallbackManager.Factory.create();
+
+                        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+                        loginButton.registerCallback(callbackManager, callback);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
             }
         });
-
-//        loginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                editor.putString("loginVia", "fb");
-//                editor.commit();
-//                FBLogin();
-//            }
-//        });
 
         buttonLoginGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                animationButtonScale = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale);
+                v.startAnimation(animationButtonScale);
+                animationButtonScale.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.google_pressed);
+                        drawable.setBounds(0, 0, 64, 64);
+                        buttonLoginGooglePlus.setCompoundDrawables(drawable, null, null, null);
+                        buttonLoginGooglePlus.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.googlePressed));
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.google_login);
+                        drawable.setBounds(0, 0, 64, 64);
+                        buttonLoginGooglePlus.setCompoundDrawables(drawable, null, null, null);
+                        buttonLoginGooglePlus.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.google_login));
+                        signIn();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
             }
         });
     }
