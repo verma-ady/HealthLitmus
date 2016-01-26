@@ -267,7 +267,7 @@ public class MyHealthLitmus extends AppCompatActivity implements Animation.Anima
                 editor.putString("gender", autoCompleteTextViewGender.getText().toString());
                 editor.commit();
 
-                progressDialog = new ProgressDialog(MyHealthLitmus.this);
+                progressDialog = new ProgressDialog(MyHealthLitmus.this, R.style.MyThemeDialog);
                 progressDialog.setMessage("Wait for a moment");
                 progressDialog.setCancelable(false);
                 progressDialog.setCanceledOnTouchOutside(false);

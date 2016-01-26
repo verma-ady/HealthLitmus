@@ -44,7 +44,8 @@
             android:id="@+id/navigation_drawer_LogOut"
             android:checked="false"
             android:title="LogOut"
-            android:icon="@drawable/ic_people" />
+            android:icon="@drawable/ic_people"
+            android:visible="false"/>
 
     </group>
 

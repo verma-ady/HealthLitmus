@@ -41,6 +41,8 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Home home;
+    private Menu m;
+    private MenuItem menuItemLogout;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -48,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         home = new Home();
         testResult = new TestResult();
         search = new Search();
@@ -79,6 +82,16 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
+        m = navigationView.getMenu();
+        menuItemLogout = m.findItem(R.id.navigation_drawer_LogOut);
+        if(sharedPreferences.getBoolean("login", false )) {
+            //code to load profile.class
+            menuItemLogout.setVisible(true);
+        } else {
+            menuItemLogout.setVisible(false);
+        }
+
+
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -87,7 +100,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(false);
                 android.support.v4.app.FragmentTransaction fragmentTransaction;
-                android.support.v4.app.Fragment currentFragment;
                 Log.v("MyApp", getClass().toString() + " navigation touch listener " );
 
                 //Check to see which item was being clicked and perform appropriate action
@@ -120,6 +132,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
                         break;
 
                     case R.id.navigation_drawer_LogOut:
+                        Log.v("MyApp", getClass().toString() + " logout drawer menu");
                         if(sharedPreferences.getString("loginVia", null ).equals("google")) {
                             if (mGoogleApiClient.isConnected()) {
                                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
@@ -137,7 +150,8 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
                             editor.remove("address");
                             editor.remove("gender");
                             editor.remove("login");
-                            editor.commit();
+                            editor.apply();
+                            menuItemLogout.setVisible(false);
                         } else if (sharedPreferences.getString("loginVia", null ).equals("fb")){
                             LoginManager.getInstance().logOut();
                             Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_LONG).show();
@@ -150,8 +164,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
                             editor.remove("gender");
                             editor.remove("login");
                             editor.commit();
-                        } else{
-                            Toast.makeText(getApplicationContext(), "First Login", Toast.LENGTH_LONG).show();
+                            menuItemLogout.setVisible(false);
                         }
                 }
                 //Closing drawer on item click
@@ -219,7 +232,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.O
             case R.id.menu_profile :
                 if(sharedPreferences.getBoolean("login", false )) {
                     //code to load profile.class
-                    Toast.makeText(getApplicationContext(),"Already Logged In. Loading Profile", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Already Logged In. Loading Profile Page Yet to be Developed", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(),"Not Logged In. Loading Login Page", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this, Login.class);

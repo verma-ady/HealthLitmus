@@ -1,5 +1,7 @@
 package com.healthlitmus.Activity;
 
+import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -20,6 +22,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.Scopes;
 
 import com.facebook.AccessToken;
@@ -57,7 +61,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     private GoogleApiClient mGoogleApiClient;
 
     ImageView imageViewBG;
-    Button buttonLogInHealthLitmus, buttonLoginGooglePlus;
+    Button buttonLogInHealthLitmus, buttonLoginGooglePlus, buttonLogInFB;
     Animation animationButtonAlpha, animationTextViewFade;
     TextView textViewNewUser, textViewHead1, textViewHead2;
     SharedPreferences sharedPreferences;
@@ -115,8 +119,26 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         buttonLogInHealthLitmus = (Button) findViewById(R.id.button_login_hl);
         buttonLoginGooglePlus = (Button) findViewById(R.id.button_login_gplus);
-        loginButton = (LoginButton) findViewById(R.id.buttonRegisterFacebook);
+        buttonLogInFB = (Button) findViewById(R.id.button_login_fb);
+//        loginButton = (LoginButton) findViewById(R.id.buttonRegisterFacebook);
         textViewNewUser = (TextView) findViewById(R.id.text_login_newuser);
+
+        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
+        if( !connectionDetector.isConnectingToInternet() ) {
+            Log.v("MyApp", getClass().toString() + " No Internet Connection");
+            Toast.makeText(getApplicationContext(), "Connect To Internet To Validate Authentication", Toast.LENGTH_LONG).show();
+            buttonLoginGooglePlus.setClickable(false);
+            buttonLogInHealthLitmus.setClickable(false);
+            buttonLogInFB.setClickable(false);
+//            loginButton.setClickable(false);
+            textViewNewUser.setClickable(false);
+        } else {
+            buttonLoginGooglePlus.setClickable(true);
+            buttonLogInHealthLitmus.setClickable(true);
+            buttonLogInFB.setClickable(true);
+//            loginButton.setClickable(true);
+            textViewNewUser.setClickable(true);
+        }
 
         textViewHead1 = (TextView) findViewById(R.id.text_login_head1);
         Typeface narrow = Typeface.createFromAsset(getAssets(), "fonts/arial_narrow.ttf");
@@ -130,7 +152,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.fb_login);
         drawable.setBounds(0, 0, 64, 64);
-        loginButton.setCompoundDrawables(drawable, null, null, null);
+        buttonLogInFB.setCompoundDrawables(drawable, null, null, null);
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
@@ -187,42 +209,61 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     }
 
     private void ButtonListener(){
-       buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               editor.putString("loginVia", "hl");
-               editor.commit();
-               animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
-               v.startAnimation(animationButtonAlpha);
-               animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
-                   @Override
-                   public void onAnimationStart(Animation animation) {
 
-                   }
 
-                   @Override
-                   public void onAnimationEnd(Animation animation) {
-                       //code to login user
-                       Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
-                        startActivity(intent);
-                    }
+    buttonLogInHealthLitmus.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            editor.putString("loginVia", "hl");
+            editor.commit();
+            animationButtonAlpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.aplha);
+            v.startAnimation(animationButtonAlpha);
+            animationButtonAlpha.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) { }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                @Override
+                public void onAnimationEnd(Animation animation){
+                    //code to login user
+                    Intent intent = new Intent(Login.this, AlreadyUserLogin.class);
+                    startActivity(intent);
+                }
 
-                    }
-                });
-            }
-        });
+                @Override
+                public void onAnimationRepeat(Animation animation) { }
+            });
+        }
+    });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        buttonLogInFB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editor.putString("loginVia", "fb");
                 editor.commit();
-                FBLogin();
+                loginButton = new LoginButton(Login.this);
+                loginButton.performClick();
+                accessTokenTracker = new AccessTokenTracker() {
+                    @Override
+                    protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
+                        updateWithToken(newAccessToken);
+                    }
+                };
+
+                callbackManager = CallbackManager.Factory.create();
+
+                loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+                loginButton.registerCallback(callbackManager, callback);
             }
         });
+
+//        loginButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                editor.putString("loginVia", "fb");
+//                editor.commit();
+//                FBLogin();
+//            }
+//        });
 
         buttonLoginGooglePlus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,9 +283,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.v("MyApp", "handleSignInResult:" + result.isSuccess());
+        Log.v("MyApp", getClass().toString() + " handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
-            Log.v("MyApp", getClass().toString() + "Google handleSignInResult() if Login");
+            Log.v("MyApp", getClass().toString() + " Google handleSignInResult() if Login");
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             if(mGoogleApiClient.hasConnectedApi(Plus.API)){
@@ -289,46 +330,17 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             startActivity(intent);
             finish();
             } else {
-            // Signed out, show unauthenticated UI.
-            Log.v("MyApp", getClass().toString() + "Google handleSignInResult() else Login");
-            Toast.makeText(this, "Connect to Internet to Sign In", Toast.LENGTH_SHORT).show();
-        }
+                // Signed out, show unauthenticated UI.
+                Log.v("MyApp", getClass().toString() + "Google handleSignInResult() else Login");
+                Toast.makeText(this, "Unable Sign In", Toast.LENGTH_SHORT).show();
+            }
     }
     //--------------------------------------------------------------------------------------- Google Sign In
 
     // FaceBook Sign In ---------------------------------------------------------------------------------------
-    private void FBLogin(){
-        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
-        if( connectionDetector.isConnectingToInternet() ) {
-
-            accessTokenTracker = new AccessTokenTracker() {
-                @Override
-                protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                    updateWithToken(newAccessToken);
-                }
-            };
-
-            updateWithToken(AccessToken.getCurrentAccessToken());
-
-            callbackManager = CallbackManager.Factory.create();
-
-            loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-            loginButton.registerCallback(callbackManager, callback);
-        } else {
-            Toast.makeText(getApplicationContext(), "Connect To Internet To Validate Authentication ", Toast.LENGTH_LONG).show();
-            loginButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "Connect To Internet To Validate Authentication ",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    }
-
     private void updateWithToken( AccessToken currentAccessToken ){
         if(currentAccessToken!=null){
-            Log.v("MyApp", getClass().toString() + "Login updateWithToken not null ");
+            Log.v("MyApp", getClass().toString() + "updateWithToken:If(Token NonNull)");
 
             GraphRequest request = GraphRequest.newMeRequest(currentAccessToken, new GraphRequest.GraphJSONObjectCallback() {
                 @Override
@@ -364,7 +376,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             request.executeAsync();
 
         } else {
-            Log.v("MyApp", getClass().toString() + "Login updateWithToken null ");
+            Log.v("MyApp", getClass().toString() + "updateWithToken:Else(Token Null)");
 //            dialog.dismiss();
         }
     }//updatewithtoken
@@ -379,21 +391,35 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.v("MyApp", getClass().toString() + " Request:" + requestCode + " Result:" + resultCode);
         if (requestCode == RC_SIGN_IN) {
-            Log.v("MyApp", getClass().toString() + " onActivityResult If ");
+            Log.v("MyApp", getClass().toString() + " onActivityResult:If Google");
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        } else{
-            Log.v("MyApp", getClass().toString() + " onActivityResult Else ");
+        } else if (requestCode==64206) {
+            Log.v("MyApp", getClass().toString() + " onActivityResult:Else If Facebook");
             callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if(requestCode==65538) {
+            int errorCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext());
+            Log.v("MyApp", getClass().toString() + " onActivityResult:Else If 65538" + " Error:" +errorCode);
+//            (GoogleApiAvailability.getInstance().getErrorDialog(this, errorCode, 10 )).show();
+            PendingIntent pendingIntent = GoogleApiAvailability.getInstance().getErrorResolutionPendingIntent(
+                    getApplicationContext(), errorCode, 10);
+
         }
+
     }
 
     //Google onConnectionFailed -----------------------------------------------------------------------------------
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.v("MyApp", getClass().toString() + " ConnectionFailed: " + connectionResult );
+        Log.v("MyApp", getClass().toString() + " ConnectionFailed: " + connectionResult.getErrorCode() );
+        Log.v("MyApp", getClass().toString() + " ConnectionFailed: " + connectionResult.getErrorMessage() );
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Log.d("MyApp", "onConnectionFailed:" + connectionResult);
+//        if(connectionResult.getErrorCode()==2){
+//            Toast.makeText(getApplicationContext(), "Please update Google Play Services", Toast.LENGTH_LONG).show();
+//        }
     }
 }
